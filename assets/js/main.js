@@ -53,24 +53,9 @@
 
   /* ------------------------------------------------- Slides & navigation */
   const slides = $$('.slide');
-  const dotsNav = $('.dots');
   const topLinks = $$('.topnav a');
   const topbar = $('.topbar');
   const progress = $('.progress span');
-  const slideNum = $('#slideNum');
-  const slideName = $('#slideName');
-  $('#slideTotal').textContent = pad(slides.length);
-
-  const dots = slides.map((s, i) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.dataset.label = s.dataset.title;
-    b.setAttribute('aria-label', `Slide ${i + 1}: ${s.dataset.title}`);
-    b.addEventListener('click', () => goSlide(i));
-    dotsNav.appendChild(b);
-    return b;
-  });
-
   let current = -1;
   const goSlide = (i) => {
     const idx = Math.max(0, Math.min(slides.length - 1, i));
@@ -87,9 +72,6 @@
     slides.forEach((s, i) => { if (s.getBoundingClientRect().top <= probe) idx = i; });
     if (idx !== current) {
       current = idx;
-      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
-      slideNum.textContent = pad(idx + 1);
-      slideName.textContent = slides[idx].dataset.title;
       const ch = slides[idx].dataset.ch;
       topLinks.forEach((a) => a.classList.toggle('active', a.dataset.ch === ch));
     }
@@ -271,8 +253,9 @@
 
   /* ---------------------------------------------------------- Hero terminal */
   const heroTerm = $('#heroTerm');
-  const badgeCommit = $('#badgeCommit');
-  const badgeLive = $('#badgeLive');
+  const noBadge = { classList: { add() {}, remove() {} } };
+  const badgeCommit = $('#badgeCommit') || noBadge;
+  const badgeLive = $('#badgeLive') || noBadge;
   const HERO = [
     { t: 'cmd', text: 'claude' },
     { t: 'sys', html: '<span class="spark">✻</span> Claude Code <span class="dim">· ~/my-site</span>' },
