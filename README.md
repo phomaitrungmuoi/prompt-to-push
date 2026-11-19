@@ -3,7 +3,7 @@
 A visual, single-page presentation that teaches the whole loop:
 
 1. **Install** Git, the GitHub CLI and Claude Code (macOS, Windows, Linux)
-2. **Connect** Git and your terminal to GitHub (`gh auth login`, SSH alternative), create a repo and turn on GitHub Pages
+2. **Connect** Git and your terminal to GitHub with one `gh auth login`
 3. **Grant permissions** so Claude Code can `git commit` and `git push` on its own, safely (`.claude/settings.json` + `CLAUDE.md`)
 4. **Visualize the flow**: an interactive swimlane diagram from creating the codebase → writing the request → Claude reading, editing, verifying → commit → push → GitHub Pages deploy
 

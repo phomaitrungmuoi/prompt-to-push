@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prompt to Push — Git, GitHub &amp; Claude Code</title>
-<meta name="description" content="A visual, step-by-step presentation: install Git, the GitHub CLI and Claude Code, connect them in your terminal, let Claude commit and push for you, and publish with GitHub Pages.">
+<meta name="description" content="A short visual workshop: install Git, the GitHub CLI and Claude Code, connect them in your terminal, and let Claude commit and push for you.">
 <meta name="theme-color" content="#FAF9F5">
 <meta property="og:title" content="Prompt to Push — Git, GitHub & Claude Code">
-<meta property="og:description" content="Install, connect, grant permissions, and watch a request travel from your terminal to a live website.">
+<meta property="og:description" content="Install, connect, grant permissions, and watch one request travel from your terminal to a live site.">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +24,6 @@
 </head>
 <body>
 
-<!-- Icon sprite -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-prompt" viewBox="0 0 24 24"><path d="m5 7 5 5-5 5"/><path d="M13 18h6"/></symbol>
   <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="3"/><path d="m7 9.5 3 2.5-3 2.5"/><path d="M12.5 15h4.5"/></symbol>
@@ -41,71 +40,62 @@
   <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7.5"/><path d="m21 21-4.3-4.3"/></symbol>
   <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></symbol>
   <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="m8.5 12 2.5 2.5 4.5-5"/></symbol>
-  <symbol id="i-tick" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
-  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
   <symbol id="i-commit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M3 12h5.5"/><path d="M15.5 12H21"/></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><rect width="13" height="13" x="8.5" y="8.5" rx="2"/><path d="M4.5 15.5c-1.1 0-2-.9-2-2v-9c0-1.1.9-2 2-2h9c1.1 0 2 .9 2 2"/></symbol>
   <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
-  <symbol id="i-max" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/><path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
   <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15l12-7.5z"/></symbol>
   <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14"/><path d="M16 5v14"/></symbol>
   <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
   <symbol id="i-prev" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
   <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></symbol>
   <symbol id="i-file" viewBox="0 0 24 24"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8"/><path d="M8 17h5"/></symbol>
   <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
-  <symbol id="i-lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
-  <symbol id="i-slash" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="3"/><path d="m13.5 8-3 8"/></symbol>
 </svg>
 
 <a class="skip" href="#main">Skip to content</a>
 <div class="progress" aria-hidden="true"><span></span></div>
 
 <header class="topbar">
-  <a class="brand" href="#intro" aria-label="Prompt to Push, back to start">
+  <a class="brand" href="#intro" aria-label="Prompt to Push, back to top">
     <span class="brand-mark"><svg class="ic"><use href="#i-prompt"/></svg></span>
-    <span class="brand-name">Prompt <i>to</i> Push</span>
+    <span class="brand-name">Prompt to Push</span>
   </a>
   <nav class="topnav" aria-label="Chapters">
-    <a href="#install-git" data-ch="1"><b>01</b>Install</a>
+    <a href="#install" data-ch="1"><b>01</b>Install</a>
     <a href="#connect" data-ch="2"><b>02</b>Connect</a>
     <a href="#permissions" data-ch="3"><b>03</b>Permissions</a>
     <a href="#flow" data-ch="4"><b>04</b>Workflow</a>
   </nav>
-  <div class="top-actions">
-    <button class="icon-btn" id="fullscreenBtn" type="button" title="Present full screen (F)" aria-label="Toggle full screen">
-      <svg class="ic"><use href="#i-max"/></svg>
-    </button>
-    <button class="icon-btn" id="themeBtn" type="button" title="Toggle light / dark (T)" aria-label="Toggle light or dark theme">
-      <svg class="ic ic-sun"><use href="#i-sun"/></svg>
-      <svg class="ic ic-moon"><use href="#i-moon"/></svg>
-    </button>
-  </div>
+  <button class="icon-btn" id="themeBtn" type="button" title="Light / dark (T)" aria-label="Toggle light or dark theme">
+    <svg class="ic ic-sun"><use href="#i-sun"/></svg>
+    <svg class="ic ic-moon"><use href="#i-moon"/></svg>
+  </button>
 </header>
-
 
 <main id="main">
 
-<!-- ============================ 0 · HERO ============================ -->
+<!-- ============================ HERO ============================ -->
 <section class="slide hero" id="intro" data-title="Intro" data-ch="0">
   <div class="wrap hero-wrap">
     <div class="hero-copy">
-      <p class="eyebrow reveal">Workshop · Git × GitHub × Claude Code</p>
-      <h1 class="reveal">From <em>prompt</em><br>to <em>push</em>.</h1>
-      <p class="lead reveal">Install Git, GitHub and Claude Code, connect them in your terminal, and let Claude commit and push your work: safely, automatically, and live on GitHub Pages.</p>
+      <p class="eyebrow reveal">A short workshop · Git × GitHub × Claude Code</p>
+      <h1 class="reveal">From prompt<br>to <em>push</em>.</h1>
+      <p class="lead reveal">Set up Git, GitHub and Claude Code, connect them in your terminal, and let Claude commit and push your changes for you.</p>
       <div class="cta reveal">
-        <a class="btn btn-primary" href="#trio">Start the tour <svg class="ic"><use href="#i-arrow"/></svg></a>
-        <a class="btn btn-ghost" href="#flow">Jump to the flow</a>
+        <a class="btn btn-primary" href="#install">Start <svg class="ic"><use href="#i-arrow"/></svg></a>
+        <a class="btn btn-ghost" href="#flow">See the flow</a>
       </div>
-      <ul class="chips reveal">
-        <li><svg class="ic"><use href="#i-tick"/></svg>About 15 minutes</li>
-        <li><svg class="ic"><use href="#i-tick"/></svg>macOS · Windows · Linux</li>
-        <li><svg class="ic"><use href="#i-tick"/></svg>No Git experience needed</li>
-      </ul>
+      <ol class="agenda reveal" aria-label="Chapters">
+        <li><a href="#install"><b>01</b>Install</a></li>
+        <li><a href="#connect"><b>02</b>Connect</a></li>
+        <li><a href="#permissions"><b>03</b>Permissions</a></li>
+        <li><a href="#flow"><b>04</b>Workflow</a></li>
+      </ol>
     </div>
-    <div class="hero-visual reveal">
+    <div class="stage reveal">
       <div class="term term-hero">
         <div class="term-bar"><i></i><i></i><i></i><span>~/my-site — claude</span></div>
         <div class="term-body" id="heroTerm" role="img" aria-label="Animated example: Claude Code edits a site, commits, and pushes to GitHub"></div>
@@ -114,605 +104,162 @@
   </div>
 </section>
 
-<!-- ============================ 1 · TOOLKIT ============================ -->
-<section class="slide alt" id="trio" data-title="The toolkit" data-ch="0">
+<!-- ============================ 01 INSTALL ============================ -->
+<section class="slide" id="install" data-title="Install" data-ch="1">
   <div class="wrap">
-    <header class="slide-head center">
-      <p class="eyebrow reveal">The toolkit</p>
-      <h2 class="reveal">Three tools. <em>One</em> workflow.</h2>
-      <p class="lead reveal">Each tool has one job. Together, they turn a sentence you type into a change that is live on the web.</p>
+    <header class="slide-head head-row">
+      <div>
+        <p class="eyebrow reveal"><span class="ch">01</span>Install</p>
+        <h2 class="reveal">Three tools, <em>three commands</em>.</h2>
+        <p class="lead reveal">Pick your system once. Every command on the page follows.</p>
+      </div>
+      <div class="os-switch reveal" role="group" aria-label="Operating system">
+        <button type="button" data-os="mac" aria-pressed="false">macOS</button>
+        <button type="button" data-os="win" aria-pressed="false">Windows</button>
+        <button type="button" data-os="linux" aria-pressed="false">Linux</button>
+      </div>
     </header>
 
-    <div class="trio">
-      <article class="card tool-card reveal" style="--tone: var(--accent)">
-        <span class="tag">Agent</span>
-        <div class="tool-ic"><svg class="ic"><use href="#i-spark"/></svg></div>
-        <h3>Claude Code</h3>
-        <p class="sub">Writes the change</p>
-        <p>An AI coding agent in your terminal. It reads your project, edits files and runs commands: only the ones you allow.</p>
-      </article>
-      <div class="trio-arrow reveal" aria-hidden="true"><span class="line"></span><small>commits with</small></div>
-      <article class="card tool-card reveal" style="--tone: var(--olive)">
-        <span class="tag">Local</span>
-        <div class="tool-ic"><svg class="ic"><use href="#i-branch"/></svg></div>
+    <div class="tools">
+      <article class="tool-card reveal" style="--tone: var(--olive)">
+        <div class="tool-top"><span class="tool-ic"><svg class="ic"><use href="#i-branch"/></svg></span><span class="tool-n">1 / 3</span></div>
         <h3>Git</h3>
-        <p class="sub">Saves the history</p>
-        <p>Version control on your machine. Every change becomes a <strong>commit</strong> you can review, compare or undo.</p>
+        <p class="desc">Saves every change as a commit you can review or undo.</p>
+        <div class="code"><div class="code-bar"><span class="code-lang">install + introduce yourself</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+<pre><code><span class="osl" data-show="mac"><span class="p">$ </span>xcode-select --install
+</span><span class="osl" data-show="win"><span class="p">PS&gt; </span>winget install --id Git.Git -e --source winget
+</span><span class="osl" data-show="linux"><span class="p">$ </span>sudo apt install git
+</span><span class="p">$ </span>git config --global user.name <span class="s">"Your Name"</span>
+<span class="p">$ </span>git config --global user.email <span class="s">"you@example.com"</span></code></pre></div>
+        <p class="note">Use the same email as your GitHub account.</p>
       </article>
-      <div class="trio-arrow reveal" aria-hidden="true"><span class="line"></span><small>pushes to</small></div>
-      <article class="card tool-card reveal" style="--tone: var(--sky)">
-        <span class="tag">Cloud</span>
-        <div class="tool-ic"><svg class="ic"><use href="#i-cloud"/></svg></div>
-        <h3>GitHub</h3>
-        <p class="sub">Shares &amp; hosts it</p>
-        <p>The online home for your repository. It backs up your commits and serves your site for free with <strong>GitHub Pages</strong>.</p>
+
+      <article class="tool-card reveal" style="--tone: var(--sky)">
+        <div class="tool-top"><span class="tool-ic"><svg class="ic"><use href="#i-cloud"/></svg></span><span class="tool-n">2 / 3</span></div>
+        <h3>GitHub CLI</h3>
+        <p class="desc">Your repositories in the cloud, driven from the terminal.</p>
+        <div class="code"><div class="code-bar"><span class="code-lang">install + check</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+<pre><code><span class="osl" data-show="mac"><span class="p">$ </span>brew install gh
+</span><span class="osl" data-show="win"><span class="p">PS&gt; </span>winget install --id GitHub.cli
+</span><span class="osl" data-show="linux"><span class="p">$ </span>sudo apt install gh
+</span><span class="p">$ </span>gh --version</code></pre></div>
+        <p class="note">First, create a free account at <a href="https://github.com/signup" target="_blank" rel="noopener">github.com</a>.</p>
+      </article>
+
+      <article class="tool-card reveal" style="--tone: var(--accent)">
+        <div class="tool-top"><span class="tool-ic"><svg class="ic"><use href="#i-spark"/></svg></span><span class="tool-n">3 / 3</span></div>
+        <h3>Claude Code</h3>
+        <p class="desc">An AI agent that reads, edits, runs and ships your code.</p>
+        <div class="code"><div class="code-bar"><span class="code-lang">install + sign in</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+<pre><code><span class="osl" data-show="mac linux"><span class="p">$ </span>curl -fsSL https://claude.ai/install.sh | bash
+</span><span class="osl" data-show="win"><span class="p">PS&gt; </span>irm https://claude.ai/install.ps1 | iex
+</span><span class="p">$ </span>claude   <span class="cm"># opens your browser to sign in</span></code></pre></div>
+        <p class="note" data-show="mac linux">Needs a Claude Pro, Max, Team or Enterprise plan, or a Console account.</p>
+        <p class="note" data-show="win">Install Git first: Claude Code on Windows runs commands through Git Bash.</p>
       </article>
     </div>
-
-    <ol class="roadmap reveal" aria-label="Agenda">
-      <li><a href="#install-git"><b>01</b><span>Install</span><small>Git, GitHub CLI, Claude Code</small></a></li>
-      <li><a href="#connect"><b>02</b><span>Connect</span><small>Sign in &amp; create a repo</small></a></li>
-      <li><a href="#permissions"><b>03</b><span>Permissions</span><small>Let Claude commit &amp; push</small></a></li>
-      <li><a href="#flow"><b>04</b><span>Workflow</span><small>The full flow, visualized</small></a></li>
-    </ol>
   </div>
 </section>
 
-<!-- ============================ 2 · INSTALL GIT ============================ -->
-<section class="slide" id="install-git" data-title="Install Git" data-ch="1">
+<!-- ============================ 02 CONNECT ============================ -->
+<section class="slide band" id="connect" data-title="Connect" data-ch="2">
   <div class="wrap">
     <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">01</span>Install · 1 of 3</p>
-      <h2 class="reveal">Install <em>Git</em></h2>
-      <p class="lead reveal">Git is the engine underneath everything else. Install it once, tell it who you are, and you are done.</p>
+      <p class="eyebrow reveal"><span class="ch">02</span>Connect</p>
+      <h2 class="reveal">One login links Git to <em>GitHub</em>.</h2>
+      <p class="lead reveal">The GitHub CLI signs you in through your browser, keeps a secure token, and hands it to Git. After that, <code class="inline">git push</code> just works, for you and for Claude.</p>
     </header>
 
-    <div class="split">
-      <ol class="steps">
-        <li class="step reveal">
-          <span class="step-n">1</span>
-          <div class="step-body">
-            <h3>Install it with your system's package manager</h3>
-            <div class="tabs" data-sync="os">
-              <div class="tab-list" role="tablist" aria-label="Operating system">
-                <button role="tab" data-tab="mac">macOS</button>
-                <button role="tab" data-tab="win">Windows</button>
-                <button role="tab" data-tab="linux">Linux</button>
-              </div>
-              <div class="tab-panel" data-panel="mac">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">Command Line Tools</span><code>xcode-select --install</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                  <li><span class="cl-label">or Homebrew</span><code>brew install git</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-              </div>
-              <div class="tab-panel" data-panel="win">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">PowerShell</span><code data-prompt="PS> ">winget install --id Git.Git -e --source winget</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-                <p class="note">Prefer a classic installer? Download it from <a href="https://git-scm.com/downloads" target="_blank" rel="noopener">git-scm.com</a> and keep the default options. They include <strong>Git Bash</strong>.</p>
-              </div>
-              <div class="tab-panel" data-panel="linux">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">Debian / Ubuntu</span><code>sudo apt update &amp;&amp; sudo apt install git</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                  <li><span class="cl-label">Fedora</span><code>sudo dnf install git</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                  <li><span class="cl-label">Arch</span><code>sudo pacman -S git</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">2</span>
-          <div class="step-body">
-            <h3>Check that it works</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>git --version
-<span class="out">git version 2.56.1</span></code></pre></div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">3</span>
-          <div class="step-body">
-            <h3>Introduce yourself</h3>
-            <p>Git stamps every commit with a name and an email. Use the email of your GitHub account so your commits link to your profile.</p>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>git config --global user.name <span class="s">"Your Name"</span>
-<span class="p">$ </span>git config --global user.email <span class="s">"you@example.com"</span>
-<span class="p">$ </span>git config --global init.defaultBranch main</code></pre></div>
-          </div>
-        </li>
-      </ol>
-
-      <aside class="side">
-        <div class="callout reveal">
-          <div class="callout-ic"><svg class="ic"><use href="#i-info"/></svg></div>
-          <div>
-            <h4>On Windows? Install Git first.</h4>
-            <p>Claude Code on Windows runs its commands through <strong>Git Bash</strong>, which comes with Git for Windows.</p>
-          </div>
-        </div>
-        <div class="card zones reveal" aria-label="Where your changes live">
-          <h4>Where your changes live</h4>
-          <div class="zone"><span class="zone-ic"><svg class="ic"><use href="#i-folder"/></svg></span><div><b>Working folder</b><small>Files you and Claude edit</small></div></div>
-          <div class="zone-arrow"><span class="zl"></span><code>git add</code></div>
-          <div class="zone"><span class="zone-ic"><svg class="ic"><use href="#i-file"/></svg></span><div><b>Staging area</b><small>Changes picked for the next commit</small></div></div>
-          <div class="zone-arrow"><span class="zl"></span><code>git commit</code></div>
-          <div class="zone"><span class="zone-ic"><svg class="ic"><use href="#i-commit"/></svg></span><div><b>Local history</b><small>Saved snapshots on your machine</small></div></div>
-          <div class="zone-arrow"><span class="zl"></span><code>git push</code></div>
-          <div class="zone zone-cloud"><span class="zone-ic"><svg class="ic"><use href="#i-cloud"/></svg></span><div><b>GitHub</b><small>The shared copy online</small></div></div>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ 3 · GITHUB ============================ -->
-<section class="slide alt" id="install-github" data-title="GitHub &amp; gh" data-ch="1">
-  <div class="wrap">
-    <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">01</span>Install · 2 of 3</p>
-      <h2 class="reveal">Get <em>GitHub</em> ready</h2>
-      <p class="lead reveal">GitHub keeps your repository in the cloud and can host it as a website. The GitHub CLI, <code class="inline">gh</code>, lets you (and Claude) drive it from the terminal.</p>
-    </header>
-
-    <div class="split">
-      <ol class="steps">
-        <li class="step reveal">
-          <span class="step-n">1</span>
-          <div class="step-body">
-            <h3>Create a free account</h3>
-            <p>Sign up at <a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> and verify your email. Then turn on two-factor authentication in <em>Settings → Password and authentication</em>.</p>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">2</span>
-          <div class="step-body">
-            <h3>Install the GitHub CLI</h3>
-            <div class="tabs" data-sync="os">
-              <div class="tab-list" role="tablist" aria-label="Operating system">
-                <button role="tab" data-tab="mac">macOS</button>
-                <button role="tab" data-tab="win">Windows</button>
-                <button role="tab" data-tab="linux">Linux</button>
-              </div>
-              <div class="tab-panel" data-panel="mac">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">Homebrew</span><code>brew install gh</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-              </div>
-              <div class="tab-panel" data-panel="win">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">PowerShell</span><code data-prompt="PS> ">winget install --id GitHub.cli</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-              </div>
-              <div class="tab-panel" data-panel="linux">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">Debian / Ubuntu</span><code>sudo apt install gh</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                  <li><span class="cl-label">Fedora</span><code>sudo dnf install gh</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                  <li><span class="cl-label">Arch</span><code>sudo pacman -S github-cli</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-                <p class="note">Want the newest release on Debian or Ubuntu? Add the official package repository from <a href="https://cli.github.com" target="_blank" rel="noopener">cli.github.com</a>.</p>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">3</span>
-          <div class="step-body">
-            <h3>Check it</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>gh --version
-<span class="out">gh version 2.104.0 (2026-11-12)</span></code></pre></div>
-          </div>
-        </li>
-      </ol>
-
-      <aside class="side">
-        <div class="callout reveal">
-          <div class="callout-ic"><svg class="ic"><use href="#i-globe"/></svg></div>
-          <div>
-            <h4>Your username matters</h4>
-            <p>Your free website address is built from it:</p>
-            <p class="url-demo">https://<b>username</b>.github.io/<b>repo</b>/</p>
-          </div>
-        </div>
-        <div class="card why reveal">
-          <h4>Why use the CLI?</h4>
-          <ul class="ticks">
-            <li><svg class="ic"><use href="#i-key"/></svg><span>Signs Git in with a secure token, no passwords typed into prompts.</span></li>
-            <li><svg class="ic"><use href="#i-folder"/></svg><span>Creates repositories without opening a browser.</span></li>
-            <li><svg class="ic"><use href="#i-globe"/></svg><span>Turns on GitHub Pages with a single command.</span></li>
-            <li><svg class="ic"><use href="#i-spark"/></svg><span>Claude can run the very same commands for you.</span></li>
-          </ul>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ 4 · CLAUDE CODE ============================ -->
-<section class="slide" id="install-claude" data-title="Claude Code" data-ch="1">
-  <div class="wrap">
-    <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">01</span>Install · 3 of 3</p>
-      <h2 class="reveal">Install <em>Claude Code</em></h2>
-      <p class="lead reveal">Claude Code is Anthropic's coding agent for the terminal. It reads your project, edits files and runs commands, always within the permissions you set.</p>
-    </header>
-
-    <div class="split">
-      <ol class="steps">
-        <li class="step reveal">
-          <span class="step-n">1</span>
-          <div class="step-body">
-            <h3>Run the installer</h3>
-            <div class="tabs" data-sync="os">
-              <div class="tab-list" role="tablist" aria-label="Operating system">
-                <button role="tab" data-tab="mac">macOS</button>
-                <button role="tab" data-tab="win">Windows</button>
-                <button role="tab" data-tab="linux">Linux</button>
-              </div>
-              <div class="tab-panel" data-panel="mac">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">Native installer</span><code>curl -fsSL https://claude.ai/install.sh | bash</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                  <li><span class="cl-label">or Homebrew</span><code>brew install --cask claude-code</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-              </div>
-              <div class="tab-panel" data-panel="win">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">PowerShell</span><code data-prompt="PS> ">irm https://claude.ai/install.ps1 | iex</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-                <p class="note">Needs Git for Windows (for Git Bash). Using WSL instead? Run the Linux command inside it.</p>
-              </div>
-              <div class="tab-panel" data-panel="linux">
-                <ul class="cmd-list">
-                  <li><span class="cl-label">Native installer</span><code>curl -fsSL https://claude.ai/install.sh | bash</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></li>
-                </ul>
-                <p class="note">Works on Ubuntu, Debian, Fedora, Arch and WSL. The native install updates itself in the background.</p>
-              </div>
-            </div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">2</span>
-          <div class="step-body">
-            <h3>Verify the install</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>claude --version
-<span class="out">2.1.328 (Claude Code)</span>
-<span class="p">$ </span>claude doctor   <span class="cm"># checks your install</span></code></pre></div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">3</span>
-          <div class="step-body">
-            <h3>Open a project and sign in</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>cd my-site
-<span class="p">$ </span>claude</code></pre></div>
-            <p>The first launch opens your browser to sign in. Inside Claude Code, type <code class="inline">/login</code> to switch accounts and <code class="inline">/help</code> to list every command.</p>
-          </div>
-        </li>
-      </ol>
-
-      <aside class="side">
-        <div class="callout reveal">
-          <div class="callout-ic"><svg class="ic"><use href="#i-key"/></svg></div>
-          <div>
-            <h4>What you need</h4>
-            <p>A Claude <strong>Pro, Max, Team or Enterprise</strong> plan, or an <strong>Anthropic Console</strong> account with API credits.</p>
-          </div>
-        </div>
-        <div class="term term-mini reveal">
-          <div class="term-bar"><i></i><i></i><i></i><span>first launch</span></div>
-          <div class="term-body">
-<div class="tl"><span class="p">$</span> claude</div>
-<div class="tl"><span class="spark">✻</span> Welcome to Claude Code</div>
-<div class="tl dim">Select login method:</div>
-<div class="tl sel">❯ 1. Claude account with subscription</div>
-<div class="tl dim">  2. Anthropic Console account</div>
-<div class="tl dim">Opening your browser to sign in…</div>
-<div class="tl ok">✓ Login successful. Press Enter to continue</div>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ 5 · CONNECT ============================ -->
-<section class="slide alt" id="connect" data-title="Connect to GitHub" data-ch="2">
-  <div class="wrap">
-    <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">02</span>Connect · 1 of 2</p>
-      <h2 class="reveal">Link your terminal to <em>GitHub</em></h2>
-      <p class="lead reveal">Pushing needs proof that it is really you. The GitHub CLI signs you in once, stores a secure token, and hands it to Git, so <code class="inline">git push</code> just works, for you and for Claude.</p>
-    </header>
-
-    <div class="split">
-      <div class="reveal">
-        <div class="tabs">
-          <div class="tab-list" role="tablist" aria-label="Authentication method">
-            <button role="tab" data-tab="https">HTTPS + gh <span class="rec">recommended</span></button>
-            <button role="tab" data-tab="ssh">SSH key</button>
-          </div>
-          <div class="tab-panel" data-panel="https">
-            <div class="code"><div class="code-bar"><span class="code-lang">sign in once</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+    <div class="connect">
+      <div class="code reveal"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
 <pre><code><span class="p">$ </span>gh auth login
 <span class="out"><span class="q">?</span> Where do you use GitHub? <span class="ans">GitHub.com</span></span>
 <span class="out"><span class="q">?</span> Preferred protocol for Git operations? <span class="ans">HTTPS</span></span>
 <span class="out"><span class="q">?</span> Authenticate Git with your GitHub credentials? <span class="ans">Yes</span></span>
 <span class="out"><span class="q">?</span> How would you like to authenticate? <span class="ans">Login with a web browser</span></span>
-<span class="out"><span class="warn">!</span> First copy your one-time code: <span class="ans">1A2B-3C4D</span></span>
-<span class="out"><span class="okc">✓</span> Authentication complete.</span>
-<span class="out"><span class="okc">✓</span> Logged in as your-username</span></code></pre></div>
-            <div class="code"><div class="code-bar"><span class="code-lang">confirm</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>gh auth setup-git   <span class="cm"># only needed if you answered "No" above</span>
-<span class="p">$ </span>gh auth status
-<span class="out"><span class="okc">✓</span> Logged in to github.com account your-username</span>
-<span class="out">  - Git operations protocol: https</span></code></pre></div>
-          </div>
-          <div class="tab-panel" data-panel="ssh">
-            <div class="code"><div class="code-bar"><span class="code-lang">create &amp; register a key</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>ssh-keygen -t ed25519 -C <span class="s">"you@example.com"</span>
-<span class="p">$ </span>gh ssh-key add ~/.ssh/id_ed25519.pub --title <span class="s">"My laptop"</span>
-<span class="p">$ </span>ssh -T git@github.com
-<span class="out">Hi your-username! You've successfully authenticated, but GitHub does not provide shell access.</span></code></pre></div>
-            <p class="note">With SSH, use remote URLs that look like <code class="inline">git@github.com:your-username/my-site.git</code>. If <code class="inline">gh ssh-key add</code> asks for more access, run <code class="inline">gh auth refresh -s admin:public_key</code> first.</p>
-          </div>
-        </div>
+<span class="out"><span class="okc">✓</span> Logged in as your-username</span>
+
+<span class="p">$ </span>gh auth status   <span class="cm"># check it any time</span></code></pre></div>
+
+      <div class="handshake reveal" aria-label="What happens on every push">
+        <p class="mini-label">What happens on every push</p>
+        <ol class="hs">
+          <li><span class="hs-ic"><svg class="ic"><use href="#i-terminal"/></svg></span><div><b>git push</b><small>Run by you, or by Claude</small></div></li>
+          <li><span class="hs-ic"><svg class="ic"><use href="#i-key"/></svg></span><div><b>gh hands Git the token</b><small>Stored in your system keyring</small></div></li>
+          <li><span class="hs-ic"><svg class="ic"><use href="#i-cloud"/></svg></span><div><b>GitHub accepts the commits</b><small>No password typed, or seen by Claude</small></div></li>
+        </ol>
       </div>
-
-      <aside class="side">
-        <div class="card handshake reveal" aria-label="How a push is authenticated">
-          <h4>What happens on every push</h4>
-          <div class="hs-track">
-            <div class="hs-node"><span class="hs-ic"><svg class="ic"><use href="#i-terminal"/></svg></span><div><b>git push</b><small>You or Claude, in the terminal</small></div></div>
-            <div class="hs-node"><span class="hs-ic"><svg class="ic"><use href="#i-key"/></svg></span><div><b>Credential helper</b><small><code>gh</code> supplies the token from your keyring</small></div></div>
-            <div class="hs-node"><span class="hs-ic"><svg class="ic"><use href="#i-cloud"/></svg></span><div><b>github.com</b><small>Checks the token and accepts the commits</small></div></div>
-          </div>
-          <p class="hs-foot"><svg class="ic"><use href="#i-lock"/></svg>Claude never sees your password. It runs <code>git push</code>, and Git asks <code>gh</code> for the token.</p>
-        </div>
-      </aside>
     </div>
   </div>
 </section>
 
-<!-- ============================ 6 · REPO ============================ -->
-<section class="slide" id="repo" data-title="Create a repo" data-ch="2">
+<!-- ============================ 03 PERMISSIONS ============================ -->
+<section class="slide" id="permissions" data-title="Permissions" data-ch="3">
   <div class="wrap">
     <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">02</span>Connect · 2 of 2</p>
-      <h2 class="reveal">Create a repo and go <em>live</em></h2>
-      <p class="lead reveal">A handful of commands take you from an empty folder to a public website. This folder becomes the codebase Claude works in.</p>
+      <p class="eyebrow reveal"><span class="ch">03</span>Permissions</p>
+      <h2 class="reveal">Let Claude <em>commit &amp; push</em> on its own.</h2>
+      <p class="lead reveal">Two small files in your project. One says what Claude may run. The other says when it should ship.</p>
     </header>
 
-    <div class="split">
-      <ol class="steps">
-        <li class="step reveal">
-          <span class="step-n">1</span>
-          <div class="step-body">
-            <h3>Create the project folder</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>mkdir my-site &amp;&amp; cd my-site
-<span class="p">$ </span>git init -b main
-<span class="p">$ </span>echo <span class="s">"&lt;h1&gt;Hello, world&lt;/h1&gt;"</span> &gt; index.html</code></pre></div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">2</span>
-          <div class="step-body">
-            <h3>Make the first commit</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>git add index.html
-<span class="p">$ </span>git commit -m <span class="s">"chore: first commit"</span></code></pre></div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">3</span>
-          <div class="step-body">
-            <h3>Create the GitHub repo and push, in one go</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>gh repo create my-site --public --source=. --remote=origin --push
-<span class="out"><span class="okc">✓</span> Created repository your-username/my-site on GitHub</span>
-<span class="out"><span class="okc">✓</span> Added remote https://github.com/your-username/my-site.git</span>
-<span class="out"><span class="okc">✓</span> Pushed commits to https://github.com/your-username/my-site.git</span></code></pre></div>
-          </div>
-        </li>
-        <li class="step reveal">
-          <span class="step-n">4</span>
-          <div class="step-body">
-            <h3>Turn on GitHub Pages</h3>
-            <div class="code"><div class="code-bar"><span class="code-lang">terminal</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="p">$ </span>gh api -X POST <span class="s">"repos/{owner}/{repo}/pages"</span> \
-    -f <span class="s">"source[branch]=main"</span> -f <span class="s">"source[path]=/"</span></code></pre></div>
-            <p class="note">Prefer clicking? Open the repo → <em>Settings → Pages</em> → <em>Deploy from a branch</em> → <code class="inline">main</code> / <code class="inline">(root)</code>.</p>
-          </div>
-        </li>
-      </ol>
-
-      <aside class="side">
-        <div class="browser reveal" aria-label="Your site on GitHub Pages">
-          <div class="b-bar">
-            <i></i><i></i><i></i>
-            <div class="b-url"><svg class="ic"><use href="#i-lock"/></svg><span>your-username.github.io/my-site/</span></div>
-          </div>
-          <div class="b-load"><span></span></div>
-          <div class="b-page">
-            <div class="b-hello">Hello, world</div>
-            <div class="b-lines"><span></span><span></span><span></span></div>
-          </div>
+    <div class="files">
+      <div class="file reveal">
+        <div class="file-head">
+          <span class="file-ic"><svg class="ic"><use href="#i-shield"/></svg></span>
+          <div><b>What it may run</b><code>.claude/settings.json</code></div>
         </div>
-        <div class="callout reveal">
-          <div class="callout-ic"><svg class="ic"><use href="#i-globe"/></svg></div>
-          <div>
-            <h4>Live in about a minute</h4>
-            <p>Every push to <code class="inline">main</code> redeploys the site automatically. Check progress with <code class="inline">gh run list</code>, open the repo with <code class="inline">gh browse</code>.</p>
-          </div>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ 7 · PERMISSIONS ============================ -->
-<section class="slide alt" id="permissions" data-title="Permissions" data-ch="3">
-  <div class="wrap">
-    <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">03</span>Permissions · 1 of 2</p>
-      <h2 class="reveal">Let Claude <em>commit &amp; push</em> on its own</h2>
-      <p class="lead reveal">Out of the box, Claude Code asks before running commands such as <code class="inline">git commit</code>. Allow and deny rules decide what it may do without asking, and what it may never do.</p>
-    </header>
-
-    <div class="ways">
-      <article class="card way reveal">
-        <span class="way-n">A</span>
-        <h3><svg class="ic"><use href="#i-msg"/></svg>Approve once, remember</h3>
-        <p>When Claude asks to run a command, choose <strong>“Yes, and don't ask again”</strong> to save a rule for it.</p>
-        <div class="prompt-mock" aria-hidden="true">
-          <div class="pm-box">
-            <div class="pm-h">Bash command</div>
-            <div class="pm-cmd">git commit -m "feat: add footer"</div>
-            <div class="pm-q">Do you want to proceed?</div>
-            <div class="pm-o">  1. Yes</div>
-            <div class="pm-o sel">❯ 2. Yes, and don't ask again for git commit commands</div>
-            <div class="pm-o">  3. No, and tell Claude what to do differently</div>
-          </div>
-        </div>
-      </article>
-      <article class="card way reveal">
-        <span class="way-n">B</span>
-        <h3><svg class="ic"><use href="#i-slash"/></svg>The /permissions menu</h3>
-        <p>Type <code class="inline">/permissions</code> inside Claude Code to see every rule, and add or remove them in an interactive menu.</p>
-        <div class="slash-mock" aria-hidden="true">
-          <div class="sm-in"><span class="p">&gt;</span> /permissions</div>
-          <div class="sm-tabs"><span class="on">Allow</span><span>Ask</span><span>Deny</span></div>
-          <div class="sm-row"><span class="okc">✓</span> Bash(git commit:*)</div>
-          <div class="sm-row"><span class="okc">✓</span> Bash(git push:*)</div>
-          <div class="sm-row add">+ Add a new rule…</div>
-        </div>
-      </article>
-      <article class="card way reveal">
-        <span class="way-n">C</span>
-        <h3><svg class="ic"><use href="#i-file"/></svg>A settings file</h3>
-        <p>Write the rules once in <code class="inline">.claude/settings.json</code>. Commit it, and everyone on the project gets the same setup.</p>
-        <ul class="where">
-          <li><code>~/.claude/settings.json</code><span>You, in every project</span></li>
-          <li><code>.claude/settings.json</code><span>This project, shared with the team</span></li>
-          <li><code>.claude/settings.local.json</code><span>This project, only you (git-ignored)</span></li>
-        </ul>
-      </article>
-    </div>
-
-    <div class="split split-even settings-split">
-      <div class="reveal">
-        <div class="code code-tall"><div class="code-bar"><span class="code-lang">.claude/settings.json</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+        <div class="code"><div class="code-bar"><span class="code-lang">json</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
 <pre><code>{
   <span class="k">"permissions"</span>: {
     <span class="k">"allow"</span>: [
       <span class="s">"Bash(git status)"</span>,
       <span class="s">"Bash(git diff:*)"</span>,
-      <span class="s">"Bash(git log:*)"</span>,<span class="anno" data-n="1"></span>
       <span class="s">"Bash(git add:*)"</span>,
       <span class="s">"Bash(git commit:*)"</span>,
-      <span class="s">"Bash(git push:*)"</span>,
-      <span class="s">"Bash(git pull:*)"</span><span class="anno" data-n="2"></span>
+      <span class="s">"Bash(git push:*)"</span>
     ],
     <span class="k">"deny"</span>: [
       <span class="s">"Bash(git push --force:*)"</span>,
-      <span class="s">"Bash(git push -f:*)"</span>,
-      <span class="s">"Bash(git reset --hard:*)"</span>,<span class="anno" data-n="3"></span>
-      <span class="s">"Read(./.env)"</span><span class="anno" data-n="4"></span>
+      <span class="s">"Bash(git reset --hard:*)"</span>,
+      <span class="s">"Read(./.env)"</span>
     ]
   }
 }</code></pre></div>
+        <ul class="legend">
+          <li><b>allow</b>runs without asking</li>
+          <li><b>deny</b>always blocked, beats allow</li>
+          <li><b>:*</b>any arguments</li>
+        </ul>
       </div>
-      <div>
-        <ol class="anno-list">
-          <li class="reveal"><span class="anno-n">1</span><div><b>Look freely.</b> Read-only commands like status, diff and log never change anything, so they run without a prompt.</div></li>
-          <li class="reveal"><span class="anno-n">2</span><div><b>Ship without asking.</b> <code class="inline">add</code>, <code class="inline">commit</code>, <code class="inline">push</code> and <code class="inline">pull</code> are pre-approved. <code class="inline">:*</code> means “this command with any arguments”.</div></li>
-          <li class="reveal"><span class="anno-n">3</span><div><b>Block the dangerous ones.</b> Force-push and hard reset are refused. A deny rule always wins over an allow rule.</div></li>
-          <li class="reveal"><span class="anno-n">4</span><div><b>Keep secrets unread.</b> Claude cannot open your <code class="inline">.env</code> file, so its values never reach a prompt or a commit.</div></li>
-        </ol>
-        <div class="callout callout-soft reveal">
-          <div class="callout-ic"><svg class="ic"><use href="#i-shield"/></svg></div>
-          <div>
-            <h4>Belt and braces</h4>
-            <p>Also add a <strong>branch protection rule</strong> for <code class="inline">main</code> on GitHub (Settings → Branches). It blocks force-pushes on the server, whatever any tool tries.</p>
-          </div>
+
+      <div class="file reveal">
+        <div class="file-head">
+          <span class="file-ic"><svg class="ic"><use href="#i-file"/></svg></span>
+          <div><b>When it should ship</b><code>CLAUDE.md</code></div>
         </div>
+        <div class="code"><div class="code-bar"><span class="code-lang">markdown</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
+<pre><code><span class="h">## Git workflow</span>
+
+- When a task is done and checks pass,
+  commit and push without asking.
+- Stage only the files you changed.
+- Use Conventional Commits: <span class="s">feat:</span>, <span class="s">fix:</span>, <span class="s">docs:</span>.
+- Never force-push. Never commit secrets.</code></pre></div>
+        <p class="note">Claude reads <code>CLAUDE.md</code> at the start of every session. Run <code>/init</code> inside Claude Code to create one.</p>
       </div>
     </div>
+
+    <p class="tip reveal"><svg class="ic"><use href="#i-info"/></svg><span>Prefer clicking? Type <code class="inline">/permissions</code> inside Claude Code, or answer <strong>“Yes, and don't ask again”</strong> the first time Claude asks to commit.</span></p>
   </div>
 </section>
 
-<!-- ============================ 8 · AUTOPILOT ============================ -->
-<section class="slide" id="autopilot" data-title="CLAUDE.md rules" data-ch="3">
-  <div class="wrap">
-    <header class="slide-head">
-      <p class="eyebrow reveal"><span class="ch">03</span>Permissions · 2 of 2</p>
-      <h2 class="reveal">Tell Claude <em>when</em> to ship</h2>
-      <p class="lead reveal">Permissions decide <em>what</em> Claude may run. A <code class="inline">CLAUDE.md</code> file in your project says <em>when</em> and <em>how</em>, and Claude reads it at the start of every session.</p>
-    </header>
-
-    <div class="split">
-      <div>
-        <div class="code reveal"><div class="code-bar"><span class="code-lang">CLAUDE.md</span><button class="copy" type="button"><svg class="ic"><use href="#i-copy"/></svg><span>Copy</span></button></div>
-<pre><code><span class="h"># Project rules</span>
-
-<span class="h">## Git workflow</span>
-- When a task is finished and checks pass, commit and push without asking.
-- Stage only the files you changed (<span class="s">`git add &lt;files&gt;`</span>), never <span class="s">`git add -A`</span>.
-- Use Conventional Commit messages: <span class="s">feat:</span>, <span class="s">fix:</span>, <span class="s">docs:</span>, <span class="s">style:</span>, <span class="s">refactor:</span>.
-- Push to <span class="s">`origin main`</span>, or to the current branch.
-- Never force-push or rewrite history that is already on GitHub.
-- Never commit secrets: <span class="s">.env</span> files, keys or tokens.</code></pre></div>
-        <p class="note reveal">Starting from scratch? Run <code class="inline">/init</code> inside Claude Code to generate a <code class="inline">CLAUDE.md</code> from your project, then paste in the Git section.</p>
-
-        <div class="term term-try reveal">
-          <div class="term-bar"><i></i><i></i><i></i><span>try it</span></div>
-          <div class="term-body">
-<div class="tl ask"><span class="p">&gt;</span> Add a contact section to the homepage, then ship it.</div>
-<div class="tl tool"><span class="dot"></span><b>Update</b><span class="arg">(index.html)</span><em>+24</em></div>
-<div class="tl tool"><span class="dot"></span><b>Bash</b><span class="arg">(git commit -m "feat: add contact section")</span></div>
-<div class="tl ok">  ⎿ ran without a prompt: allowed by settings</div>
-<div class="tl tool"><span class="dot"></span><b>Bash</b><span class="arg">(git push origin main)</span></div>
-<div class="tl ok">  ⎿ main → origin/main</div>
-          </div>
-        </div>
-      </div>
-
-      <aside class="side">
-        <div class="card modes reveal">
-          <h4>Permission modes</h4>
-          <p>Press <kbd>Shift</kbd> + <kbd>Tab</kbd> inside Claude Code to cycle through them.</p>
-          <ul>
-            <li><span class="mode-pill">Default</span><span>Asks before edits and before any command not on your allow list.</span></li>
-            <li><span class="mode-pill on">Accept edits</span><span>Edits files without asking. Commands still follow your rules.</span></li>
-            <li><span class="mode-pill">Plan</span><span>Read-only. Researches and proposes a plan before changing anything.</span></li>
-          </ul>
-          <div class="cmd-list cmd-solo"><code>claude --permission-mode acceptEdits</code><button class="copy-sm" type="button" aria-label="Copy command"><svg class="ic"><use href="#i-copy"/></svg></button></div>
-        </div>
-        <div class="card checks reveal">
-          <h4>Safety checklist</h4>
-          <ul>
-            <li><svg class="ic yes"><use href="#i-tick"/></svg><span>Deny force-push and <code class="inline">git reset --hard</code></span></li>
-            <li><svg class="ic yes"><use href="#i-tick"/></svg><span>Protect <code class="inline">main</code> with a branch rule on GitHub</span></li>
-            <li><svg class="ic yes"><use href="#i-tick"/></svg><span>Keep secrets in <code class="inline">.env</code> and list it in <code class="inline">.gitignore</code></span></li>
-            <li><svg class="ic yes"><use href="#i-tick"/></svg><span>Undo any commit with <code class="inline">git revert &lt;sha&gt;</code></span></li>
-            <li><svg class="ic no"><use href="#i-x"/></svg><span>Skip <code class="inline">--dangerously-skip-permissions</code> on your own machine</span></li>
-          </ul>
-        </div>
-      </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ============================ 9 · FLOW ============================ -->
-<section class="slide alt" id="flow" data-title="The full flow" data-ch="4">
+<!-- ============================ 04 FLOW ============================ -->
+<section class="slide band" id="flow" data-title="Workflow" data-ch="4">
   <div class="wrap">
     <header class="slide-head">
       <p class="eyebrow reveal"><span class="ch">04</span>Workflow</p>
-      <h2 class="reveal">The full flow, <em>visualized</em></h2>
-      <p class="lead reveal">From creating the codebase to a live website: who does what, and which command moves the work forward. Press play, or click any step.</p>
+      <h2 class="reveal">One request, <em>start to finish</em>.</h2>
+      <p class="lead reveal">Follow a request from your keyboard to a live site: who does what, and which command moves it forward. Press play, or click any step.</p>
     </header>
 
     <div class="flow-controls reveal">
@@ -744,60 +291,28 @@
   </div>
 </section>
 
-<!-- ============================ 10 · RECAP ============================ -->
-<section class="slide" id="recap" data-title="Cheat sheet" data-ch="0">
-  <div class="wrap">
-    <header class="slide-head center">
-      <p class="eyebrow reveal">Recap</p>
-      <h2 class="reveal">Your <em>cheat sheet</em></h2>
-      <p class="lead reveal">Everything from this presentation on one screen. Click any command to copy it.</p>
-    </header>
-
-    <div class="cheat">
-      <article class="card cheat-card reveal">
-        <h3><span class="cc-ic"><svg class="ic"><use href="#i-terminal"/></svg></span>Install &amp; check</h3>
-        <ul>
-          <li><button class="cmd" type="button">git --version</button></li>
-          <li><button class="cmd" type="button">gh --version</button></li>
-          <li><button class="cmd" type="button">claude --version</button></li>
-          <li><button class="cmd" type="button">claude doctor</button></li>
-        </ul>
-      </article>
-      <article class="card cheat-card reveal">
-        <h3><span class="cc-ic"><svg class="ic"><use href="#i-key"/></svg></span>Connect</h3>
-        <ul>
-          <li><button class="cmd" type="button">gh auth login</button></li>
-          <li><button class="cmd" type="button">gh auth status</button></li>
-          <li><button class="cmd" type="button">gh repo create my-site --public --source=. --push</button></li>
-          <li><button class="cmd" type="button">gh browse</button></li>
-        </ul>
-      </article>
-      <article class="card cheat-card reveal">
-        <h3><span class="cc-ic"><svg class="ic"><use href="#i-spark"/></svg></span>Daily loop</h3>
-        <ul>
-          <li><button class="cmd" type="button">claude</button></li>
-          <li><button class="cmd" type="button">/permissions</button></li>
-          <li><button class="cmd" type="button">git log --oneline -5</button></li>
-          <li><button class="cmd" type="button">gh run list --limit 3</button></li>
-        </ul>
-      </article>
-      <article class="card cheat-card reveal">
-        <h3><span class="cc-ic"><svg class="ic"><use href="#i-reset"/></svg></span>Inspect &amp; undo</h3>
-        <ul>
-          <li><button class="cmd" type="button">git status</button></li>
-          <li><button class="cmd" type="button">git diff</button></li>
-          <li><button class="cmd" type="button">git revert HEAD</button></li>
-          <li><button class="cmd" type="button">git restore index.html</button></li>
-        </ul>
-      </article>
-    </div>
-
-    <div class="finale reveal">
-      <p class="eyebrow">That's the whole loop</p>
-      <h2>Now go <em>ship</em> something.</h2>
-      <div class="cta center">
+<!-- ============================ FINALE ============================ -->
+<section class="slide finale" id="recap" data-title="Recap" data-ch="0">
+  <div class="wrap finale-wrap">
+    <div>
+      <p class="eyebrow reveal">The daily loop</p>
+      <h2 class="reveal">Now go <em>ship</em> something.</h2>
+      <p class="lead reveal">Once it is set up, every change is one sentence away.</p>
+      <div class="cta reveal">
         <a class="btn btn-primary" href="#flow"><svg class="ic"><use href="#i-reset"/></svg>Replay the flow</a>
-        <a class="btn btn-ghost" href="#intro">Back to the start</a>
+        <a class="btn btn-ghost" href="#intro"><svg class="ic"><use href="#i-up"/></svg>Back to top</a>
+      </div>
+    </div>
+    <div class="term term-loop reveal">
+      <div class="term-bar"><i></i><i></i><i></i><span>every day</span></div>
+      <div class="term-body">
+<div class="tl"><span class="p">$</span> cd my-site</div>
+<div class="tl"><span class="p">$</span> claude</div>
+<div class="tl ask"><span class="p">&gt;</span> Add a pricing section, then commit and push it.</div>
+<div class="tl tool"><span class="dot"></span><b>Bash</b><span class="arg">(git commit -m "feat: add pricing section")</span></div>
+<div class="tl tool"><span class="dot"></span><b>Bash</b><span class="arg">(git push origin main)</span></div>
+<div class="tl ok">  ⎿ main → origin/main</div>
+<div class="tl"><span class="p">$</span> gh browse</div>
       </div>
     </div>
   </div>
@@ -807,15 +322,8 @@
 
 <footer class="footer">
   <div class="wrap footer-wrap">
-    <div>
-      <a class="brand" href="#intro"><span class="brand-mark"><svg class="ic"><use href="#i-prompt"/></svg></span><span class="brand-name">Prompt <i>to</i> Push</span></a>
-      <p>An unofficial, community-made guide. Claude and Claude Code are trademarks of Anthropic, PBC. GitHub is a trademark of GitHub, Inc. Git is a trademark of Software Freedom Conservancy.</p>
-    </div>
-    <div class="keys">
-      <span><kbd>←</kbd><kbd>→</kbd> slides</span>
-      <span><kbd>F</kbd> full screen</span>
-      <span><kbd>T</kbd> theme</span>
-    </div>
+    <p>An unofficial, community-made guide. Claude and Claude Code are trademarks of Anthropic, PBC. GitHub is a trademark of GitHub, Inc. Git is a trademark of Software Freedom Conservancy.</p>
+    <p class="keys"><kbd>←</kbd><kbd>→</kbd> sections <kbd>F</kbd> full screen <kbd>T</kbd> theme</p>
   </div>
 </footer>
 

@@ -31,15 +31,11 @@
   });
   syncThemeMeta();
 
-  /* ----------------------------------------------------------- Fullscreen */
-  const fsBtn = $('#fullscreenBtn');
   const toggleFullscreen = () => {
     if (!document.fullscreenEnabled) return;
     if (document.fullscreenElement) document.exitFullscreen();
     else doc.requestFullscreen().catch(() => {});
   };
-  if (!document.fullscreenEnabled) fsBtn.hidden = true;
-  fsBtn.addEventListener('click', toggleFullscreen);
 
   /* ---------------------------------------------------------------- Toast */
   const toastEl = $('#toast');
@@ -51,12 +47,13 @@
     toastTimer = setTimeout(() => toastEl.classList.remove('show'), 1600);
   };
 
-  /* ------------------------------------------------- Slides & navigation */
+  /* ------------------------------------------------- Sections & navigation */
   const slides = $$('.slide');
   const topLinks = $$('.topnav a');
   const topbar = $('.topbar');
   const progress = $('.progress span');
   let current = -1;
+
   const goSlide = (i) => {
     const idx = Math.max(0, Math.min(slides.length - 1, i));
     slides[idx].scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
@@ -66,7 +63,6 @@
     const max = doc.scrollHeight - innerHeight;
     progress.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
     topbar.classList.toggle('scrolled', scrollY > 10);
-
     const probe = innerHeight * 0.42;
     let idx = 0;
     slides.forEach((s, i) => { if (s.getBoundingClientRect().top <= probe) idx = i; });
@@ -89,7 +85,6 @@
     if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
     const t = e.target;
     if (t.isContentEditable || /^(input|textarea|select)$/i.test(t.tagName || '')) return;
-    if (t.closest && t.closest('[role="tablist"]') && /^Arrow/.test(e.key)) return;
     switch (e.key) {
       case 'ArrowRight': case 'PageDown': e.preventDefault(); goSlide(current + 1); break;
       case 'ArrowLeft': case 'PageUp': e.preventDefault(); goSlide(current - 1); break;
@@ -101,13 +96,11 @@
     }
   });
 
-  /* ------------------------------------------------------ Reveal on scroll */
-  const reveals = $$('.reveal, .step');
+  /* ------------------------------------------------------------ Fade-in */
+  const reveals = $$('.reveal');
   reveals.forEach((el) => {
-    if (!el.classList.contains('reveal')) return;
     const sibs = Array.from(el.parentElement.children).filter((c) => c.classList.contains('reveal'));
-    const i = Math.max(0, sibs.indexOf(el));
-    el.style.setProperty('--d', `${Math.min(i * 0.08, 0.48)}s`);
+    el.style.setProperty('--d', `${Math.min(Math.max(0, sibs.indexOf(el)) * 0.08, 0.4)}s`);
   });
   if ('IntersectionObserver' in window && !reduceMotion) {
     const io = new IntersectionObserver((entries) => {
@@ -120,7 +113,7 @@
     reveals.forEach((el) => el.classList.add('in'));
   }
 
-  /* ------------------------------------------------------------------ Tabs */
+  /* ------------------------------------------------------------- OS switch */
   const detectOS = () => {
     const ua = navigator.userAgent || '';
     const plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
@@ -128,55 +121,14 @@
     if (/mac|iphone|ipad/i.test(plat) || /Mac OS X|iPhone|iPad/i.test(ua)) return 'mac';
     return 'linux';
   };
-  const OS = detectOS();
-
-  const selectTab = (group, key, focus) => {
-    const tabs = $$('[role="tab"]', group);
-    if (!tabs.some((t) => t.dataset.tab === key)) return;
-    tabs.forEach((t) => {
-      const on = t.dataset.tab === key;
-      t.setAttribute('aria-selected', String(on));
-      t.tabIndex = on ? 0 : -1;
-      if (on && focus) t.focus();
-    });
-    $$('.tab-panel', group).forEach((p) => { p.hidden = p.dataset.panel !== key; });
+  const osButtons = $$('.os-switch button');
+  const setOS = (os) => {
+    doc.dataset.os = os;
+    osButtons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.os === os)));
   };
-
-  $$('.tabs').forEach((group, gi) => {
-    const tabs = $$('[role="tab"]', group);
-    tabs.forEach((tab, ti) => {
-      const key = tab.dataset.tab;
-      const panel = $(`.tab-panel[data-panel="${key}"]`, group);
-      tab.type = 'button';
-      tab.id = `tab-${gi}-${key}`;
-      if (panel) {
-        panel.id = `${tab.id}-panel`;
-        panel.setAttribute('role', 'tabpanel');
-        panel.setAttribute('aria-labelledby', tab.id);
-        tab.setAttribute('aria-controls', panel.id);
-      }
-      if (group.dataset.sync === 'os' && key === OS) {
-        tab.classList.add('detected');
-        tab.title = 'Detected on this device';
-      }
-      tab.addEventListener('click', () => {
-        if (group.dataset.sync) {
-          $$(`.tabs[data-sync="${group.dataset.sync}"]`).forEach((g) => selectTab(g, key));
-        } else {
-          selectTab(group, key);
-        }
-      });
-      tab.addEventListener('keydown', (e) => {
-        if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
-        e.preventDefault();
-        const next = tabs[(ti + (e.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length];
-        next.click();
-        next.focus();
-      });
-    });
-    const initial = group.dataset.sync === 'os' ? OS : tabs[0].dataset.tab;
-    selectTab(group, tabs.some((t) => t.dataset.tab === initial) ? initial : tabs[0].dataset.tab);
-  });
+  osButtons.forEach((b) => b.addEventListener('click', () => { setOS(b.dataset.os); store.set('ptp-os', b.dataset.os); }));
+  const savedOS = store.get('ptp-os');
+  setOS(['mac', 'win', 'linux'].includes(savedOS) ? savedOS : detectOS());
 
   /* ------------------------------------------------------------------ Copy */
   const copyText = async (text) => {
@@ -197,88 +149,35 @@
       return ok;
     }
   };
-  const flash = (btn, label) => {
-    btn.classList.add('copied');
-    const span = $('span', btn);
-    const old = span ? span.textContent : null;
-    if (span) span.textContent = label;
-    setTimeout(() => { btn.classList.remove('copied'); if (span) span.textContent = old; }, 1600);
-  };
 
   $$('.code').forEach((block) => {
     const btn = $('.copy', block);
     const codeEl = $('code', block);
     if (!btn || !codeEl) return;
+    const label = $('span', btn);
     btn.addEventListener('click', async () => {
       const clone = codeEl.cloneNode(true);
       const isShell = !!$('.p', clone);
-      $$('.p, .out, .anno', clone).forEach((n) => n.remove());
+      const os = doc.dataset.os;
+      $$('[data-show]', clone).forEach((n) => { if (!n.dataset.show.split(' ').includes(os)) n.remove(); });
+      $$('.p, .out', clone).forEach((n) => n.remove());
       let text = clone.textContent;
-      if (isShell) {
-        text = text.split('\n').map((l) => l.replace(/\s+$/, '')).filter((l) => l.trim() !== '').join('\n');
-      }
+      if (isShell) text = text.split('\n').map((l) => l.replace(/\s+$/, '')).filter((l) => l.trim() !== '').join('\n');
       const ok = await copyText(text.trim());
-      flash(btn, ok ? 'Copied' : 'Press Ctrl+C');
+      btn.classList.add('copied');
+      label.textContent = ok ? 'Copied' : 'Press Ctrl+C';
       if (ok) toast('Copied to clipboard');
-    });
-  });
-  $$('.copy-sm').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const code = btn.parentElement.querySelector('code');
-      if (!code) return;
-      const ok = await copyText(code.textContent.trim());
-      if (ok) { flash(btn, ''); toast('Command copied'); }
-    });
-  });
-  $$('.cmd').forEach((btn) => {
-    btn.title = 'Click to copy';
-    btn.addEventListener('click', async () => {
-      const ok = await copyText(btn.textContent.trim());
-      if (ok) toast(`Copied: ${btn.textContent.trim()}`);
+      setTimeout(() => { btn.classList.remove('copied'); label.textContent = 'Copy'; }, 1600);
     });
   });
 
-  /* --------------------------------------------------------- Handshake fx */
-  const hsTrack = $('.hs-track');
-  const sizeHandshake = () => {
-    if (!hsTrack) return;
-    const nodes = $$('.hs-node', hsTrack);
-    if (nodes.length < 2) return;
-    const first = nodes[0].getBoundingClientRect();
-    const last = nodes[nodes.length - 1].getBoundingClientRect();
-    hsTrack.style.setProperty('--hs-dist', `${Math.round(last.top - first.top)}px`);
-  };
-  sizeHandshake();
-  window.addEventListener('resize', sizeHandshake);
+  /* --------------------------------------------------------- Push streak */
+  const hs = $('.hs');
+  const sizeStreak = () => { if (hs) hs.style.setProperty('--hs-h', `${hs.offsetHeight - 40}px`); };
+  sizeStreak();
+  window.addEventListener('resize', sizeStreak);
 
-  /* ---------------------------------------------------------- Hero terminal */
-  const heroTerm = $('#heroTerm');
-  const noBadge = { classList: { add() {}, remove() {} } };
-  const badgeCommit = $('#badgeCommit') || noBadge;
-  const badgeLive = $('#badgeLive') || noBadge;
-  const HERO = [
-    { t: 'cmd', text: 'claude' },
-    { t: 'sys', html: '<span class="spark">✻</span> Claude Code <span class="dim">· ~/my-site</span>' },
-    { t: 'ask', text: 'Add a dark-mode toggle, then commit and push it.' },
-    { t: 'think', text: 'Planning the change' },
-    { t: 'tool', name: 'Read', arg: 'index.html' },
-    { t: 'tool', name: 'Update', arg: 'assets/style.css', extra: '+42 −3' },
-    { t: 'tool', name: 'Bash', arg: 'git add index.html assets/style.css' },
-    { t: 'tool', name: 'Bash', arg: 'git commit -m "feat: add dark-mode toggle"', badge: 'commit' },
-    { t: 'tool', name: 'Bash', arg: 'git push origin main' },
-    { t: 'ok', text: '  ⎿ main → origin/main' },
-    { t: 'done', text: '● Done. Live at you.github.io/my-site', badge: 'live' },
-  ];
-
-  let heroVisible = true;
-  let heroWaiters = [];
-  const flushHero = () => { if (heroVisible && !document.hidden) { heroWaiters.forEach((r) => r()); heroWaiters = []; } };
-  const heroReady = () => (heroVisible && !document.hidden ? Promise.resolve() : new Promise((r) => heroWaiters.push(r)));
-  document.addEventListener('visibilitychange', flushHero);
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((en) => { heroVisible = en[0].isIntersecting; flushHero(); }, { threshold: 0.05 }).observe(heroTerm);
-  }
-
+  /* ------------------------------------------------------- Terminal helpers */
   const line = (cls, html) => {
     const el = document.createElement('div');
     el.className = `tl ${cls || ''}`;
@@ -296,6 +195,31 @@
   const toolHTML = (item) =>
     `<span class="dot"></span><b>${esc(item.name)}</b><span class="arg">(${esc(item.arg)})</span>${item.extra ? `<em>${esc(item.extra)}</em>` : ''}`;
 
+  /* ---------------------------------------------------------- Hero terminal */
+  const heroTerm = $('#heroTerm');
+  const HERO = [
+    { t: 'cmd', text: 'claude' },
+    { t: 'sys', html: '<span class="spark">✻</span> Claude Code <span class="dim">· ~/my-site</span>' },
+    { t: 'ask', text: 'Add a dark-mode toggle, then commit and push it.' },
+    { t: 'think', text: 'Planning the change' },
+    { t: 'tool', name: 'Read', arg: 'index.html' },
+    { t: 'tool', name: 'Update', arg: 'assets/style.css', extra: '+42 −3' },
+    { t: 'tool', name: 'Bash', arg: 'git add index.html assets/style.css' },
+    { t: 'tool', name: 'Bash', arg: 'git commit -m "feat: add dark-mode toggle"' },
+    { t: 'tool', name: 'Bash', arg: 'git push origin main' },
+    { t: 'ok', text: '  ⎿ main → origin/main' },
+    { t: 'done', text: '● Done. Live at you.github.io/my-site' },
+  ];
+
+  let heroVisible = true;
+  let heroWaiters = [];
+  const flushHero = () => { if (heroVisible && !document.hidden) { heroWaiters.forEach((r) => r()); heroWaiters = []; } };
+  const heroReady = () => (heroVisible && !document.hidden ? Promise.resolve() : new Promise((r) => heroWaiters.push(r)));
+  document.addEventListener('visibilitychange', flushHero);
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((en) => { heroVisible = en[0].isIntersecting; flushHero(); }, { threshold: 0.05 }).observe(heroTerm);
+  }
+
   const renderHeroStatic = () => {
     heroTerm.innerHTML = '';
     HERO.forEach((item) => {
@@ -305,31 +229,28 @@
       else if (item.t === 'tool') heroTerm.appendChild(line('tool', toolHTML(item)));
       else if (item.t === 'ok' || item.t === 'done') heroTerm.appendChild(line(item.t, esc(item.text)));
     });
-    badgeCommit.classList.add('show');
-    badgeLive.classList.add('show');
   };
 
   const runHero = async () => {
     const SPIN = ['·', '✢', '✳', '✶', '✻', '✽'];
     for (;;) {
       heroTerm.innerHTML = '';
-      badgeCommit.classList.remove('show');
-      badgeLive.classList.remove('show');
       await sleep(400);
       for (const item of HERO) {
         await heroReady();
         if (item.t === 'cmd' || item.t === 'ask') {
-          const el = line(item.t === 'ask' ? 'ask enter' : 'enter', `<span class="p">${item.t === 'ask' ? '&gt;' : '$'}</span> `);
+          const isAsk = item.t === 'ask';
+          const el = line(isAsk ? 'ask enter' : 'enter', `<span class="p">${isAsk ? '&gt;' : '$'}</span> `);
           const tx = document.createElement('span');
-          el.appendChild(tx);
           const c = caret();
+          el.appendChild(tx);
           el.appendChild(c);
           heroTerm.appendChild(el);
-          await sleep(item.t === 'ask' ? 300 : 500);
-          await typeText(tx, item.text, item.t === 'ask' ? 26 : 70);
+          await sleep(isAsk ? 300 : 500);
+          await typeText(tx, item.text, isAsk ? 26 : 70);
           await sleep(380);
           c.remove();
-          await sleep(item.t === 'ask' ? 300 : 200);
+          await sleep(isAsk ? 300 : 200);
         } else if (item.t === 'sys') {
           heroTerm.appendChild(line('enter', item.html));
           await sleep(500);
@@ -343,11 +264,9 @@
           el.remove();
         } else if (item.t === 'tool') {
           heroTerm.appendChild(line('tool enter', toolHTML(item)));
-          if (item.badge === 'commit') badgeCommit.classList.add('show');
           await sleep(item.name === 'Bash' ? 720 : 560);
         } else {
           heroTerm.appendChild(line(`${item.t} enter`, esc(item.text)));
-          if (item.badge === 'live') badgeLive.classList.add('show');
           await sleep(420);
         }
       }
@@ -357,7 +276,7 @@
       await sleep(5200);
       await heroReady();
       heroTerm.classList.add('fade');
-      await sleep(520);
+      await sleep(450);
       heroTerm.classList.remove('fade');
     }
   };
@@ -380,7 +299,7 @@
     },
     {
       lane: 0, row: 2, icon: 'i-msg', title: 'Write the request', sub: 'A plain-English prompt',
-      desc: 'Start Claude Code inside the folder and describe the outcome you want, the way you would brief a teammate. Mention that it should commit and push when done.',
+      desc: 'Start Claude Code inside the folder and describe the outcome you want, the way you would brief a teammate.',
       term: [['cmd', 'claude'], ['ask', 'Build a landing page with a hero and a pricing section, then commit and push it.']],
     },
     {
@@ -410,7 +329,7 @@
     },
     {
       lane: 3, row: 5, icon: 'i-globe', title: 'Deploy with Pages', sub: 'Live in about a minute',
-      desc: 'GitHub Pages notices the new commit on <code>main</code> and republishes your site automatically.',
+      desc: 'With GitHub Pages turned on (Settings → Pages), every new commit on <code>main</code> republishes your site automatically.',
       term: [['cmd', 'gh run list --limit 1'], ['ok', '✓ pages build and deployment · main · 41s']],
     },
     {
@@ -440,6 +359,13 @@
       `<div class="lane-head" style="--lane:${i + 1};--tone:${l.tone}"><svg class="ic"><use href="#${l.icon}"/></svg>${l.name}</div>`);
   });
 
+  const state = { index: -1 };
+  let wires = [];
+  let animToken = 0;
+  let panelToken = 0;
+  let playing = false;
+  let runId = 0;
+
   const nodes = STEPS.map((s, i) => {
     const l = LANES[s.lane];
     const b = document.createElement('button');
@@ -455,65 +381,54 @@
     grid.appendChild(b);
     return b;
   });
-
   const segs = STEPS.map(() => { const s = document.createElement('span'); seg.appendChild(s); return s; });
 
-  const state = { index: -1 };
-  let wires = [];
-  let animToken = 0;
-  let panelToken = 0;
-  let playing = false;
-  let runId = 0;
-
-  const NS = 'http://www.w3.org/2000/svg';
   const pathBetween = (a, b) => {
     const acx = a.x + a.w / 2;
     const bcx = b.x + b.w / 2;
     const acy = a.y + a.h / 2;
     const bcy = b.y + b.h / 2;
     if (Math.abs(acy - bcy) < 6) {
-      return bcx > acx
-        ? `M ${a.x + a.w} ${acy} L ${b.x - 2} ${bcy}`
-        : `M ${a.x} ${acy} L ${b.x + b.w + 2} ${bcy}`;
+      return bcx > acx ? `M ${a.x + a.w} ${acy} L ${b.x - 2} ${bcy}` : `M ${a.x} ${acy} L ${b.x + b.w + 2} ${bcy}`;
     }
     if (Math.abs(acx - bcx) < 6) return `M ${acx} ${a.y + a.h} L ${bcx} ${b.y - 2}`;
-    const by = b.y + b.h / 2;
     const dir = bcx > acx ? 1 : -1;
     const ex = dir > 0 ? b.x - 2 : b.x + b.w + 2;
-    const r = Math.min(12, Math.abs(by - (a.y + a.h)) / 2);
-    return `M ${acx} ${a.y + a.h} L ${acx} ${by - r} Q ${acx} ${by} ${acx + dir * r} ${by} L ${ex} ${by}`;
+    const r = Math.min(12, Math.abs(bcy - (a.y + a.h)) / 2);
+    return `M ${acx} ${a.y + a.h} L ${acx} ${bcy - r} Q ${acx} ${bcy} ${acx + dir * r} ${bcy} L ${ex} ${bcy}`;
   };
+
+  const setWire = (k, lit) => {
+    const w = wires[k];
+    if (!w) return;
+    w.on.style.strokeDashoffset = lit ? 0 : w.len;
+    w.base.setAttribute('marker-end', lit ? 'url(#mkOn)' : 'url(#mkIdle)');
+  };
+  const paintWires = (i) => wires.forEach((_, k) => setWire(k, k < i));
 
   const drawWires = () => {
     if (!grid.offsetParent) return;
     const gr = grid.getBoundingClientRect();
-    const rect = (el) => {
+    const boxes = nodes.map((el) => {
       const r = el.getBoundingClientRect();
       return { x: r.left - gr.left, y: r.top - gr.top, w: r.width, h: r.height };
-    };
-    const boxes = nodes.map(rect);
-    let html =
-      '<defs>' +
-      '<marker id="mkIdle" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path class="mk-idle" d="M2 1.5 L8.5 5 L2 8.5"/></marker>' +
-      '<marker id="mkOn" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path class="mk-on" d="M2 1.5 L8.5 5 L2 8.5"/></marker>' +
-      '<marker id="mkLoop" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path class="mk-loop" d="M2 1.5 L8.5 5 L2 8.5"/></marker>' +
-      '</defs>';
+    });
+    const marker = (id, cls) =>
+      `<marker id="${id}" viewBox="0 0 10 10" refX="8.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path class="${cls}" d="M2 1.5 L8.5 5 L2 8.5"/></marker>`;
+    let html = `<defs>${marker('mkIdle', 'mk-idle')}${marker('mkOn', 'mk-on')}${marker('mkLoop', 'mk-loop')}</defs>`;
     for (let i = 0; i < boxes.length - 1; i++) {
       const d = pathBetween(boxes[i], boxes[i + 1]);
       html += `<path class="wire" data-i="${i}" d="${d}" marker-end="url(#mkIdle)"/><path class="wire-on" data-i="${i}" d="${d}"/>`;
     }
-    // Loop: last step back to "Write the request"
     const a = boxes[boxes.length - 1];
     const b = boxes[1];
     const gx = 9;
     const ay = a.y + a.h / 2;
     const by = b.y + b.h / 2;
-    const loopD = `M ${a.x - 2} ${ay} L ${gx + 10} ${ay} Q ${gx} ${ay} ${gx} ${ay - 10} L ${gx} ${by + 10} Q ${gx} ${by} ${gx + 10} ${by} L ${b.x - 3} ${by}`;
-    html += `<path class="wire loop" d="${loopD}" marker-end="url(#mkLoop)"/>`;
+    html += `<path class="wire loop" d="M ${a.x - 2} ${ay} L ${gx + 10} ${ay} Q ${gx} ${ay} ${gx} ${ay - 10} L ${gx} ${by + 10} Q ${gx} ${by} ${gx + 10} ${by} L ${b.x - 3} ${by}" marker-end="url(#mkLoop)"/>`;
     html += `<text class="loop-label" transform="translate(${gx - 4} ${(ay + by) / 2}) rotate(-90)" text-anchor="middle">next request</text>`;
     html += '<circle class="packet-halo" r="10" cx="-9999" cy="-9999"/><circle class="packet" r="5" cx="-9999" cy="-9999"/>';
     svg.innerHTML = html;
-
     wires = $$('.wire-on', svg).map((p) => {
       const len = p.getTotalLength();
       p.style.strokeDasharray = `${len} ${len}`;
@@ -521,15 +436,6 @@
     });
     paintWires(state.index);
   };
-
-  const setWire = (k, lit) => {
-    const w = wires[k];
-    if (!w) return;
-    w.on.style.strokeDashoffset = lit ? 0 : w.len;
-    w.base.classList.toggle('lit', lit);
-    w.base.setAttribute('marker-end', lit ? 'url(#mkOn)' : 'url(#mkIdle)');
-  };
-  const paintWires = (i) => wires.forEach((_, k) => setWire(k, k < i));
 
   const paintNodes = (i) => {
     grid.classList.toggle('started', i >= 0);
@@ -546,18 +452,17 @@
     if (!w || dur <= 0) { setWire(k, true); resolve(); return; }
     const packet = $('.packet', svg);
     const halo = $('.packet-halo', svg);
+    const park = () => { [packet, halo].forEach((c) => { c.setAttribute('cx', -9999); c.setAttribute('cy', -9999); }); };
     const t0 = performance.now();
     const frame = (now) => {
-      if (token !== animToken) { resolve(); return; }
+      if (token !== animToken) { park(); resolve(); return; }
       const t = Math.min(1, (now - t0) / dur);
       const e = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
       w.on.style.strokeDashoffset = w.len * (1 - e);
       const pt = w.on.getPointAtLength(w.len * e);
-      packet.setAttribute('cx', pt.x); packet.setAttribute('cy', pt.y);
-      halo.setAttribute('cx', pt.x); halo.setAttribute('cy', pt.y);
+      [packet, halo].forEach((c) => { c.setAttribute('cx', pt.x); c.setAttribute('cy', pt.y); });
       if (t < 1) { requestAnimationFrame(frame); return; }
-      packet.setAttribute('cx', -9999); packet.setAttribute('cy', -9999);
-      halo.setAttribute('cx', -9999); halo.setAttribute('cy', -9999);
+      park();
       setWire(k, true);
       resolve();
     };
@@ -565,8 +470,8 @@
   });
 
   const termLine = (kind, a, b, c) => {
-    if (kind === 'cmd') return line('enter', `<span class="p">$</span> `);
-    if (kind === 'ask') return line('ask enter', `<span class="p">&gt;</span> `);
+    if (kind === 'cmd') return line('enter', '<span class="p">$</span> ');
+    if (kind === 'ask') return line('ask enter', '<span class="p">&gt;</span> ');
     if (kind === 'tool') return line('tool enter', toolHTML({ name: a, arg: b, extra: c }));
     return line(`${kind} enter`, esc(a));
   };
@@ -591,12 +496,11 @@
     fpLane.style.setProperty('--tone', l.tone);
     fpTitle.textContent = s.title;
     fpDesc.innerHTML = s.desc;
-    fpTermTitle.textContent = s.lane === 0 && i === 0 ? '~' : '~/my-site — claude';
+    fpTermTitle.textContent = i === 0 ? '~' : '~/my-site — claude';
     panel.classList.remove('swap');
-    void panel.offsetWidth; // restart animation
+    void panel.offsetWidth;
     panel.classList.add('swap');
     fpTerm.innerHTML = '';
-
     return (async () => {
       for (const [kind, a, b, c] of s.term) {
         if (cancelled()) return;
@@ -632,12 +536,12 @@
     return renderPanel(target);
   };
 
-  const setPlayUI = () => {
+  function setPlayUI() {
     playBtn.classList.toggle('playing', playing);
     playLabel.textContent = playing ? 'Pause' : (state.index >= STEPS.length - 1 ? 'Replay' : 'Play');
     playBtn.setAttribute('aria-label', playing ? 'Pause the flow' : 'Play the flow');
-  };
-  const stopPlaying = () => { playing = false; runId++; setPlayUI(); };
+  }
+  function stopPlaying() { playing = false; runId++; setPlayUI(); }
 
   const play = async () => {
     const myRun = ++runId;
@@ -666,9 +570,8 @@
   drawWires();
   if ('ResizeObserver' in window) new ResizeObserver(() => drawWires()).observe(grid);
   else window.addEventListener('resize', drawWires);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawWires(); sizeHandshake(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawWires(); sizeStreak(); });
 
-  // Auto-play the first time the diagram scrolls into view.
   if ('IntersectionObserver' in window && !reduceMotion) {
     const flowIO = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
