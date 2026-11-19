@@ -8,7 +8,7 @@ A visual, single-page presentation that teaches the whole loop:
 4. **Visualize the flow**: an interactive swimlane diagram from creating the codebase → writing the request → Claude reading, editing, verifying → commit → push → GitHub Pages deploy
 
 Pure HTML, CSS and JavaScript. No build step, no dependencies.
-
+//https://phomaitrungmuoi.github.io/prompt-to-push/
 ## Live site
 
 After you enable GitHub Pages (see below), the site lives at:
